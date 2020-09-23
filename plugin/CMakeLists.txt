@@ -122,6 +122,20 @@ target_include_directories(${GODOT-CPP}
 set_property(TARGET ${GODOT-CPP} APPEND_STRING PROPERTY COMPILE_FLAGS ${GODOT_COMPILE_FLAGS})
 set_property(TARGET ${GODOT-CPP} APPEND_STRING PROPERTY LINK_FLAGS ${GODOT_LINKER_FLAGS})
 
+####################################################################################
+## OpenXR shared library setup
+set(OPENXR_ROOT_DIR "${CMAKE_SOURCE_DIR}/libs/openxr_mobile_sdk/OpenXR")
+set(OPENXR_HEADERS_DIR "${OPENXR_ROOT_DIR}/Include/openxr")
+
+set(OPENXR_LOADER_PATH "${OPENXR_ROOT_DIR}/Libs/Android/${ANDROID_ABI}/${CMAKE_BUILD_TYPE}/libopenxr_loader.so")
+add_library(openxr_loader SHARED IMPORTED GLOBAL)
+set_target_properties(openxr_loader PROPERTIES IMPORTED_LOCATION ${OPENXR_LOADER_PATH})
+
+# Copy the openxr_loader shared library to the output directory.
+add_custom_command(OUTPUT OPENXR_LOADER_SO_LIB
+        COMMAND ${CMAKE_COMMAND} -E make_directory $<TARGET_FILE_DIR:${PROJECT_NAME}>
+        COMMAND ${CMAKE_COMMAND} -E copy_if_different ${OPENXR_LOADER_PATH} $<TARGET_FILE_DIR:${PROJECT_NAME}>)
+
 ## Setup the plugin library
 # Get Sources
 file(GLOB_RECURSE SOURCES src/main/cpp/*.c**)
@@ -129,7 +143,7 @@ file(GLOB_RECURSE HEADERS src/main/cpp/*.h**)
 
 add_library(${PROJECT_NAME}
         SHARED
-        ${SOURCES} ${HEADERS} VRAPI_SO_LIB)
+        ${SOURCES} ${HEADERS} VRAPI_SO_LIB OPENXR_LOADER_SO_LIB)
 
 target_include_directories(${PROJECT_NAME}
         PRIVATE
@@ -147,6 +161,7 @@ target_include_directories(${PROJECT_NAME}
         SYSTEM PUBLIC
         ${GODOT_HEADERS_DIR}
         ${OVR_HEADERS_DIR}
+        ${OPENXR_HEADERS_DIR}
         )
 
 target_link_libraries(${PROJECT_NAME}
