@@ -3,6 +3,11 @@
         xmlns:tools="http://schemas.android.com/tools"
         package="org.godotengine.plugin.vr.oculus.mobile">
 
+    <!-- Enable overlay keyboard -->
+    <uses-feature
+            android:name="oculus.software.overlay_keyboard"
+            android:required="true" />
+
     <application>
 
         <meta-data

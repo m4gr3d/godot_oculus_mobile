@@ -18,6 +18,8 @@ bool is_oculus_quest_2_device(OvrMobileSession *session);
 ovrDeviceType get_device_type(OvrMobileSession *session);
 
 // TODO: Add api to invoke and use the Oculus platform keyboard.
+void show_virtual_keyboard();
+
 class OvrSystem : public Reference {
     GODOT_CLASS(OvrSystem, Reference)
 
@@ -40,6 +42,10 @@ class OvrSystem : public Reference {
 
     inline bool is_oculus_quest_2_device() {
         return ovrmobile::is_oculus_quest_2_device(OvrMobileSession::get_singleton_instance());
+    }
+
+    inline void show_virtual_keyboard() {
+        ovrmobile::show_virtual_keyboard();
     }
 
  private:

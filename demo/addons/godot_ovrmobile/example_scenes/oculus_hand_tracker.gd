@@ -18,6 +18,7 @@ var hand_skel : Skeleton = null
 # Oculus mobile APIs available at runtime.
 var ovr_hand_tracking = null;
 var ovr_utilities = null;
+var ovr_system = null;
 
 # This array is used to get the orientations from the sdk each frame (an array of Quat)
 var _vrapi_bone_orientations = [];
