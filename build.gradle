@@ -2,6 +2,9 @@ apply from: 'config.gradle'
 
 buildscript {
     apply from: 'config.gradle'
+    ext {
+        versions.kotlinVersion = '1.4.21'
+    }
 
     repositories {
         google()

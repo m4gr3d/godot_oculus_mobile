@@ -1,5 +1,7 @@
-apply plugin: "com.android.library"
-apply plugin: "kotlin-android"
+plugins {
+    id 'com.android.library'
+    id 'kotlin-android'
+}
 
 android {
     buildToolsVersion = versions.buildTools
@@ -9,9 +11,9 @@ android {
     defaultConfig {
         minSdkVersion versions.minSdk
         targetSdkVersion versions.targetSdk
-        versionCode 4
-        versionName '3.0.0'
-        setProperty("archivesBaseName", "gdovrmobile.${versionName}")
+        versionCode 1
+        versionName "1.0"
+        setProperty("archivesBaseName", "gdopenxroculusmobile.${versionName}")
 
         externalNativeBuild {
             cmake {
@@ -24,29 +26,17 @@ android {
         }
     }
 
-    externalNativeBuild {
-        cmake {
-            path "CMakeLists.txt"
-        }
-    }
-
     compileOptions {
         sourceCompatibility JavaVersion.VERSION_1_8
         targetCompatibility JavaVersion.VERSION_1_8
     }
-
-    buildFeatures {
-        prefabPublishing true
-    }
-
-    prefab {
-        godot_ovrmobile {
-            headers "src/main/cpp"
-        }
+    kotlinOptions {
+        jvmTarget = '1.8'
     }
 }
 
 dependencies {
+
     implementation "org.jetbrains.kotlin:kotlin-stdlib:${versions.kotlinVersion}"
     if (rootProject.findProject(":godot:lib") != null) {
         compileOnly(project(":godot:lib"))
