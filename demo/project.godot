@@ -48,7 +48,7 @@ window/vsync/use_vsync=false
 
 [gdnative]
 
-singletons=[  ]
+singletons=[ "res://android/build/build/intermediates/merged_assets/debug/out/addons/godot_ovrmobile/godot_ovrmobile.gdnlib" ]
 
 [rendering]
 

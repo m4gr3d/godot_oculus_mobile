@@ -101,6 +101,14 @@ class OvrMobilePlugin(godot: Godot) : GodotPlugin(godot) {
         ovrEventListeners.remove(listener)
     }
 
+    public override fun runOnUiThread(action: Runnable?) {
+        super.runOnUiThread(action)
+    }
+
+    public override fun runOnRenderThread(action: Runnable?) {
+        super.runOnRenderThread(action)
+    }
+
     /**
      * Invoked by the native code to signal the headset is mounted.
      */

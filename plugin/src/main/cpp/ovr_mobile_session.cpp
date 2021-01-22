@@ -165,15 +165,21 @@ void OvrMobileSession::commit_for_eye(godot_int godot_eye) {
 
     if (ovr_eye == static_cast<int>(ovrEye::VRAPI_EYE_RIGHT)) {
         // Submit the frame.
-        const ovrLayerHeader2 *layers[] = { &layer.Header };
+        std::vector<ovrLayerHeader2*> layers_list;
+        layers_list.push_back(&layer.Header);
+        if (!ovr_layers.empty()) {
+          for (OvrLayer* ovr_layer: ovr_layers) {
+            layers_list.push_back(ovr_layer->get_layer_header());
+          }
+        }
 
         ovrSubmitFrameDescription2 frameDesc = {};
         frameDesc.Flags = 0;
         frameDesc.SwapInterval = swap_interval;
         frameDesc.FrameIndex = frame_index;
         frameDesc.DisplayTime = predicted_display_time;
-        frameDesc.LayerCount = 1;
-        frameDesc.Layers = layers;
+        frameDesc.LayerCount = layers_list.size();
+        frameDesc.Layers = layers_list.data();
 
         // Hand over the eye images to the time warp.
         vrapi_SubmitFrame2(ovr, &frameDesc);

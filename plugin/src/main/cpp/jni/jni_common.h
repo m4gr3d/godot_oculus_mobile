@@ -5,6 +5,7 @@
 #ifndef JNI_COMMON_H
 #define JNI_COMMON_H
 
+#include "ovr_mobile_session.h"
 #include <core/String.hpp>
 
 /** Auxiliary macros */
@@ -71,5 +72,12 @@ godot::String jstring_to_string(JNIEnv *env, jstring source);
  * @return JNI string instance.
  */
 jstring string_to_jstring(JNIEnv *env, const godot::String& source);
+
+/**
+ * Convert a native pointer to a jlong that can be passed to Java.
+ */
+inline jlong jptr(void *pointer) {
+  return reinterpret_cast<intptr_t>(pointer);
+}
 
 #endif // JNI_COMMON_H
