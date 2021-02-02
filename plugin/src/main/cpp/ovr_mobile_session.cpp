@@ -173,6 +173,8 @@ void OvrMobileSession::commit_for_eye(godot_int godot_eye) {
           }
         }
 
+      //layers_list.push_back(&layer.Header);
+
         ovrSubmitFrameDescription2 frameDesc = {};
         frameDesc.Flags = 0;
         frameDesc.SwapInterval = swap_interval;

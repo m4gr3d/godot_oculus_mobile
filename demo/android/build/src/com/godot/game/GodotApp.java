@@ -33,33 +33,22 @@ package com.godot.game;
 import android.net.Uri;
 import com.google.android.exoplayer2.C;
 import com.google.android.exoplayer2.DefaultRenderersFactory;
-import com.google.android.exoplayer2.ExoPlaybackException;
-import com.google.android.exoplayer2.ExoPlayer;
 import com.google.android.exoplayer2.ExoPlayerFactory;
-import com.google.android.exoplayer2.PlaybackParameters;
-import com.google.android.exoplayer2.Player;
 import com.google.android.exoplayer2.RenderersFactory;
 import com.google.android.exoplayer2.SimpleExoPlayer;
-import com.google.android.exoplayer2.Timeline;
-import com.google.android.exoplayer2.drm.DefaultDrmSessionManager;
 import com.google.android.exoplayer2.drm.DrmSessionManager;
 import com.google.android.exoplayer2.drm.ExoMediaDrm;
 import com.google.android.exoplayer2.drm.FrameworkMediaCrypto;
-import com.google.android.exoplayer2.drm.FrameworkMediaDrm;
-import com.google.android.exoplayer2.drm.HttpMediaDrmCallback;
-import com.google.android.exoplayer2.drm.UnsupportedDrmException;
 import com.google.android.exoplayer2.source.ExtractorMediaSource;
 import com.google.android.exoplayer2.source.MediaSource;
-import com.google.android.exoplayer2.source.TrackGroupArray;
 import com.google.android.exoplayer2.source.dash.DashMediaSource;
 import com.google.android.exoplayer2.source.dash.DefaultDashChunkSource;
 import com.google.android.exoplayer2.source.dash.manifest.DashManifestParser;
 import com.google.android.exoplayer2.trackselection.DefaultTrackSelector;
-import com.google.android.exoplayer2.trackselection.TrackSelectionArray;
-import com.google.android.exoplayer2.trackselection.TrackSelector;
 import com.google.android.exoplayer2.upstream.DataSource;
 import com.google.android.exoplayer2.upstream.DefaultDataSourceFactory;
 import com.google.android.exoplayer2.upstream.DefaultHttpDataSourceFactory;
+import com.google.android.exoplayer2.upstream.RawResourceDataSource;
 import com.google.android.exoplayer2.util.Util;
 
 import android.os.Bundle;
@@ -72,7 +61,6 @@ import org.godotengine.godot.plugin.GodotPluginRegistry;
 import org.godotengine.godot.xr.XRMode;
 import org.godotengine.plugin.vr.oculus.mobile.OvrMobilePlugin;
 import org.godotengine.plugin.vr.oculus.mobile.api.OvrLayer;
-import org.godotengine.plugin.vr.oculus.mobile.api.OvrLayer.VideoScreenFormat;
 import org.jetbrains.annotations.NotNull;
 
 import java.util.Arrays;
@@ -119,13 +107,15 @@ public class GodotApp extends Godot {
             throw new IllegalStateException("Unable to retrieve OVRMobile plugin");
         }
 
-        ovrLayer = new OvrLayer((OvrMobilePlugin) ovrPlugin);
+        Log.e(TAG, "CREATING SURFACE FROM JAVA");
+        ovrLayer = new OvrLayer((OvrMobilePlugin) ovrPlugin, 1280, 720);
+        Log.e(TAG, "CREATED SURFACE FROM JAVA");
         ovrLayer.addSurfaceListener(new OvrLayer.SurfaceListener() {
             @Override
             public void onSurfaceCreated(@NotNull Surface surface) {
                 Log.i(TAG, "Starting media playback.");
                 try {
-                    ovrLayer.setFormat(VideoScreenFormat.RECTILINEAR_20X9_MONO);
+                    // ovrLayer.setFormat(VideoScreenFormat.RECTILINEAR_20X9_MONO);
                     DefaultHttpDataSourceFactory httpDataSourceFactory =
                             new DefaultHttpDataSourceFactory(
                                     Util.getUserAgent(getApplicationContext(), TAG));
@@ -136,27 +126,31 @@ public class GodotApp extends Godot {
 
                     // START Set up DRM.
                     DrmSessionManager<FrameworkMediaCrypto> drmSessionManager = null;
-                    String licenseUrl = "";
-                    mediaDrm = FrameworkMediaDrm.newInstance(C.WIDEVINE_UUID);
-                    HttpMediaDrmCallback drmCallback =
-                            new HttpMediaDrmCallback(licenseUrl, httpDataSourceFactory);
-                    drmSessionManager =
-                            new DefaultDrmSessionManager<FrameworkMediaCrypto>(
-                                    C.WIDEVINE_UUID, mediaDrm, drmCallback, null, null, null);
-                    ovrLayer.setSurfaceProtected(true);
+                    // String licenseUrl = "https://proxy.uat.widevine.com/proxy?video_id=0894c7c8719b28a0&provider=widevine_test";
+                    // mediaDrm = FrameworkMediaDrm.newInstance(C.WIDEVINE_UUID);
+                    // HttpMediaDrmCallback drmCallback =
+                    //         new HttpMediaDrmCallback(licenseUrl, httpDataSourceFactory);
+                    // drmSessionManager =
+                    //         new DefaultDrmSessionManager<FrameworkMediaCrypto>(
+                    //                 C.WIDEVINE_UUID, mediaDrm, drmCallback, null, null, null);
+                    // ovrLayer.setSurfaceProtected(true);
                     // END Set up DRM.
 
                     DefaultTrackSelector trackSelector = new DefaultTrackSelector();
                     trackSelector.setParameters(
                             trackSelector.getParameters().buildUpon()
-                                    .setMaxVideoSize(1920, Integer.MAX_VALUE)
+                                    .setMaxVideoSize(3840, Integer.MAX_VALUE)
                                     .build());
 
                     RenderersFactory renderersFactory =
                             new DefaultRenderersFactory(getApplicationContext(), drmSessionManager);
                     exoPlayer = ExoPlayerFactory.newSimpleInstance(renderersFactory, trackSelector);
+                    Log.e(TAG, "GETTING SURFACE FROM JAVA");
                     exoPlayer.setVideoSurface(ovrLayer.getSurface());
-                    Uri playUri = Uri.parse("");
+                    Log.e(TAG, "GOT SURFACE FROM JAVA");
+                    // Uri playUri = Uri.parse("https://storage.googleapis.com/wvmedia/clear/h264/tears/tears.mpd");
+                    Uri playUri =
+                            RawResourceDataSource.buildRawResourceUri(R.raw.checker_video_16x9);
                     MediaSource mediaSource = buildMediaSource(playUri, dataSourceFactory);
                     exoPlayer.setPlayWhenReady(true);
                     exoPlayer.prepare(mediaSource);

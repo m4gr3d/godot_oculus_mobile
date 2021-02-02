@@ -7,7 +7,7 @@ import java.util.concurrent.atomic.AtomicLong
 /**
  * Provides APIs to access and render on a compositor layer.
  */
-class OvrLayer constructor(val ovrPlugin: OvrMobilePlugin) {
+class OvrLayer constructor(val ovrPlugin: OvrMobilePlugin, val width: Int, val height: Int) {
 
     // Keep in sync with ovr_layer.h
     enum class VideoScreenFormat {
@@ -15,7 +15,7 @@ class OvrLayer constructor(val ovrPlugin: OvrMobilePlugin) {
         EQR_MONO_360,
         EQR_LEFT_RIGHT_180,
         EQR_TOP_BOTTOM_360,
-        RECTILINEAR_20X9_MONO
+        RECTILINEAR_20X9_MONO,
     };
 
     companion object {
@@ -33,7 +33,7 @@ class OvrLayer constructor(val ovrPlugin: OvrMobilePlugin) {
 
     init {
         ovrPlugin.runOnRenderThread {
-            nativeLayerPointer.set(nativeGenerateLayer())
+            nativeLayerPointer.set(nativeGenerateLayer(width, height))
             if (nativeLayerPointer.get() != RELEASED_LAYER_POINTER) {
                 notifySurfaceCreated(getSurface()!!)
             }
@@ -103,7 +103,7 @@ class OvrLayer constructor(val ovrPlugin: OvrMobilePlugin) {
         }
     }
 
-    private external fun nativeGenerateLayer(): Long
+    private external fun nativeGenerateLayer(width: Int, height: Int): Long
 
     private external fun nativeSetFormat(layerPointer: Long, format: Int)
 

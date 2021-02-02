@@ -19,8 +19,11 @@ ovrmobile::OvrLayer *get_layer(jlong layer_pointer) {
 } // namespace
 
 extern "C" {
-JNIEXPORT jlong JNICALL JNI_METHOD(nativeGenerateLayer)(JNIEnv *, jobject) {
-  auto *layer = new ovrmobile::OvrLayer();
+JNIEXPORT jlong JNICALL JNI_METHOD(nativeGenerateLayer)(JNIEnv *,
+                                                        jobject,
+                                                        jint width,
+                                                        jint height) {
+  auto *layer = new ovrmobile::OvrLayer(width, height);
   return jptr(layer);
 }
 
