@@ -49,16 +49,12 @@ void OvrLayer::setup_cylinder_layer(int width, int height) {
   auto tracking = session->get_head_tracker();
   layer.Cylinder.HeadPose = tracking.HeadPose;
 
-  const ovrMatrix4f scaleMatrix =
-      ovrMatrix4f_CreateScale(3.0f, 3.0f, 1.0f);
-  const ovrMatrix4f transMatrix =
-      ovrMatrix4f_CreateTranslation(0.0f, 0.0f, -2.0f);
-  const ovrMatrix4f rotXMatrix = ovrMatrix4f_CreateRotation(0.0f, 0.0f, 0.0f);
-  const ovrMatrix4f rotYMatrix = ovrMatrix4f_CreateRotation(0.0f, 0.0f, 0.0f);
-
-  const ovrMatrix4f m0 = ovrMatrix4f_Multiply(&transMatrix, &scaleMatrix);
-  const ovrMatrix4f m1 = ovrMatrix4f_Multiply(&rotXMatrix, &m0);
-  const ovrMatrix4f cylinderTransform = ovrMatrix4f_Multiply(&rotYMatrix, &m1);
+  ovrVector3f translation = {0.0f, 0.0f, -2.0f};
+  float rotateYawDegrees = 0.0f;
+  float rotatePitchDegrees = 0.0f;
+  float radius = 3.0f;
+  const ovrMatrix4f cylinderTransform = CylinderModelMatrix(translation, rotateYawDegrees,
+      rotatePitchDegrees, radius);
 
   for (int eye = 0; eye < VRAPI_FRAME_LAYER_EYE_MAX; eye++) {
     ovrMatrix4f modelViewMatrix =
@@ -80,6 +76,22 @@ void OvrLayer::setup_cylinder_layer(int width, int height) {
     layer.Cylinder.Textures[eye].TextureRect = {0.0f, 0.0f, 1.0f, 1.0f};
   }
   active_layer_type = VRAPI_LAYER_TYPE_CYLINDER2;
+}
+
+void OvrLayer::update_cylinder_layer(ovrTracking2 tracking) {
+  layer.Cylinder.HeadPose = tracking.HeadPose;
+
+  ovrVector3f translation = {0.0f, 0.0f, -2.0f};
+  float rotateYawDegrees = 0.0f;
+  float rotatePitchDegrees = 0.0f;
+  float radius = 3.0f;
+  const ovrMatrix4f cylinderTransform = CylinderModelMatrix(translation, rotateYawDegrees,
+                                                            rotatePitchDegrees, radius);
+  for (int eye = 0; eye < VRAPI_FRAME_LAYER_EYE_MAX; eye++) {
+    ovrMatrix4f modelViewMatrix =
+        ovrMatrix4f_Multiply(&tracking.Eye[eye].ViewMatrix, &cylinderTransform);
+    layer.Cylinder.Textures[eye].TexCoordsFromTanAngles = ovrMatrix4f_Inverse(&modelViewMatrix);
+  }
 }
 
 OvrLayer::OvrLayer(int width, int height) {

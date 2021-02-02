@@ -169,6 +169,10 @@ void OvrMobileSession::commit_for_eye(godot_int godot_eye) {
         layers_list.push_back(&layer.Header);
         if (!ovr_layers.empty()) {
           for (OvrLayer* ovr_layer: ovr_layers) {
+            const double predictedDisplayTime =
+                vrapi_GetPredictedDisplayTime(get_ovr_mobile_context(), frame_index);
+            const ovrTracking2 tracking = vrapi_GetPredictedTracking2(get_ovr_mobile_context(), predictedDisplayTime);
+            ovr_layer->update_cylinder_layer(tracking);
             layers_list.push_back(ovr_layer->get_layer_header());
           }
         }
