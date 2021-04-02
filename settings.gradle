@@ -4,3 +4,4 @@ include ":OVRMobile"
 project(":OVRMobile").projectDir = file("plugin")
 
 include ':samples:demo'
+include ':samples:ovr_layers_demo'
