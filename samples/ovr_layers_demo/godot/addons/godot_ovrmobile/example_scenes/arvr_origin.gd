@@ -55,17 +55,17 @@ func _initialize_ovr_mobile_arvr_interface():
 			ovr_system = load("res://addons/godot_ovrmobile/OvrSystem.gdns")
 
 			# And now instance the .gdns classes for use if load was successfull
-			
+
 			# Update the refresh rate based on the device type. The value could
-			# also be picked from the values returned by 
+			# also be picked from the values returned by
 			# ovr_display.get_supported_display_refresh_rates()
 			var refresh_rate = 72 # Default common value for Quest devices
 			if (ovr_system):
 				ovr_system = ovr_system.new()
 				if (ovr_system.is_oculus_quest_2_device()):
 					refresh_rate = 90 # Only supported on Quest 2 devices
-			
-			if (ovr_display): 
+
+			if (ovr_display):
 				ovr_display = ovr_display.new()
 				# Get the list of supported display refresh rates.
 				print("Display refresh rates: " + str(ovr_display.get_supported_display_refresh_rates()))
@@ -73,15 +73,16 @@ func _initialize_ovr_mobile_arvr_interface():
 				print("Device color space: " + str(ovr_display.get_color_space()))
 				# Update the refresh rate
 				ovr_display.set_display_refresh_rate(refresh_rate)
-				
-			if (ovr_performance): 
+
+			if (ovr_performance):
 				ovr_performance = ovr_performance.new()
-			if (ovr_vr_api_proxy): 
+			if (ovr_vr_api_proxy):
 				ovr_vr_api_proxy = ovr_vr_api_proxy.new()
 
 			get_viewport().arvr = true
+			get_viewport().transparent_bg = true
 			Engine.iterations_per_second = refresh_rate
-			
+
 			# Connect to the plugin signals
 			_connect_to_signals()
 
@@ -105,6 +106,7 @@ func _connect_to_signals():
 
 
 func _on_headset_mounted():
+	get_viewport().transparent_bg = true
 	print("VR headset mounted")
 
 

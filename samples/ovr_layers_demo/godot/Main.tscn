@@ -48,6 +48,7 @@ shadow_enabled = true
 
 [node name="CPUParticles" type="CPUParticles" parent="."]
 transform = Transform( 1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 2, -1.051 )
+visible = false
 cast_shadow = 0
 amount = 256
 lifetime = 3.0

@@ -171,15 +171,30 @@ void OvrMobileSession::commit_for_eye(godot_int godot_eye) {
 
     if (ovr_eye == static_cast<int>(ovrEye::VRAPI_EYE_RIGHT)) {
         // Submit the frame.
-        const ovrLayerHeader2 *layers[] = { &layer.Header };
+        std::vector<ovrLayerHeader2*> layers_list;
+        // Uncommenting/commenting out lines 172 and 183 below for when "layer" is pushed to
+        // "layers_list" changes whether the compositor layers are placed on top. Currently,
+        // compositor layers are behind the UI layer and are invisible.
+        // layers_list.push_back(&layer.Header);
+        if (!ovr_layers.empty()) {
+            for (OvrLayer* ovr_layer: ovr_layers) {
+                const double predictedDisplayTime =
+                        vrapi_GetPredictedDisplayTime(get_ovr_mobile_context(), frame_index);
+                const ovrTracking2 tracking = vrapi_GetPredictedTracking2(get_ovr_mobile_context(), predictedDisplayTime);
+                ovr_layer->update_cylinder_layer(tracking);
+                layers_list.push_back(ovr_layer->get_layer_header());
+            }
+        }
+
+        layers_list.push_back(&layer.Header);
 
         ovrSubmitFrameDescription2 frameDesc = {};
         frameDesc.Flags = 0;
         frameDesc.SwapInterval = swap_interval;
         frameDesc.FrameIndex = frame_index;
         frameDesc.DisplayTime = predicted_display_time;
-        frameDesc.LayerCount = 1;
-        frameDesc.Layers = layers;
+        frameDesc.LayerCount = layers_list.size();
+        frameDesc.Layers = layers_list.data();
 
         // Hand over the eye images to the time warp.
         vrapi_SubmitFrame2(ovr, &frameDesc);

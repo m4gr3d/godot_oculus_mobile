@@ -7,8 +7,10 @@
 
 #include "VrApi_Types.h"
 #include "framebuffer.h"
+#include "api/ovr_layer.h"
 #include "ovr_mobile_controller.h"
 #include <android/native_window_jni.h>
+#include <vector>
 
 namespace ovrmobile {
 
@@ -84,6 +86,21 @@ class OvrMobileSession {
 
     double get_predicted_display_time() const { return predicted_display_time; };
 
+    void add_ovr_layer(OvrLayer *ovr_layer) {
+        if (ovr_layer == nullptr) {
+            return;
+        }
+        ovr_layers.push_back(ovr_layer);
+    }
+
+    void remove_ovr_layer(OvrLayer *ovr_layer) {
+        if (ovr_layer == nullptr) {
+            return;
+        }
+        ovr_layers.erase(std::remove(ovr_layers.begin(), ovr_layers.end(), ovr_layer),
+                         ovr_layers.end());
+    }
+
  private:
     OvrMobileSession();
     ~OvrMobileSession();
@@ -127,6 +144,8 @@ class OvrMobileSession {
     FrameBuffer *frame_buffers[VRAPI_EYE_COUNT];
 
     OvrMobileController *ovr_mobile_controller = nullptr;
+
+    std::vector<OvrLayer*> ovr_layers;
 };
 
 } // namespace ovrmobile
