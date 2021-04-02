@@ -80,6 +80,7 @@ func _initialize_ovr_mobile_arvr_interface():
 				ovr_vr_api_proxy = ovr_vr_api_proxy.new()
 
 			get_viewport().arvr = true
+			get_viewport().transparent_bg = true;
 			Engine.iterations_per_second = refresh_rate
 			
 			# Connect to the plugin signals
@@ -105,6 +106,7 @@ func _connect_to_signals():
 
 
 func _on_headset_mounted():
+	get_viewport().transparent_bg = true
 	print("VR headset mounted")
 
 

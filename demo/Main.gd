@@ -4,3 +4,5 @@
 extends Spatial
 
 # nothing here yet
+func _ready():
+	get_viewport().transparent_bg = true;

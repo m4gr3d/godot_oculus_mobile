@@ -166,7 +166,10 @@ void OvrMobileSession::commit_for_eye(godot_int godot_eye) {
     if (ovr_eye == static_cast<int>(ovrEye::VRAPI_EYE_RIGHT)) {
         // Submit the frame.
         std::vector<ovrLayerHeader2*> layers_list;
-        layers_list.push_back(&layer.Header);
+        // Uncommenting/commenting out lines 172 and 183 below for when "layer" is pushed to
+        // "layers_list" changes whether the compositor layers are placed on top. Currently,
+        // compositor layers are behind the UI layer and are invisible.
+        // layers_list.push_back(&layer.Header);
         if (!ovr_layers.empty()) {
           for (OvrLayer* ovr_layer: ovr_layers) {
             const double predictedDisplayTime =
@@ -177,7 +180,7 @@ void OvrMobileSession::commit_for_eye(godot_int godot_eye) {
           }
         }
 
-      //layers_list.push_back(&layer.Header);
+        layers_list.push_back(&layer.Header);
 
         ovrSubmitFrameDescription2 frameDesc = {};
         frameDesc.Flags = 0;

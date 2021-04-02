@@ -126,7 +126,7 @@ public class GodotApp extends Godot {
 
                     // START Set up DRM.
                     DrmSessionManager<FrameworkMediaCrypto> drmSessionManager = null;
-                    // String licenseUrl = "https://proxy.uat.widevine.com/proxy?video_id=0894c7c8719b28a0&provider=widevine_test";
+                    // String licenseUrl = "";
                     // mediaDrm = FrameworkMediaDrm.newInstance(C.WIDEVINE_UUID);
                     // HttpMediaDrmCallback drmCallback =
                     //         new HttpMediaDrmCallback(licenseUrl, httpDataSourceFactory);
@@ -148,7 +148,7 @@ public class GodotApp extends Godot {
                     Log.e(TAG, "GETTING SURFACE FROM JAVA");
                     exoPlayer.setVideoSurface(ovrLayer.getSurface());
                     Log.e(TAG, "GOT SURFACE FROM JAVA");
-                    // Uri playUri = Uri.parse("https://storage.googleapis.com/wvmedia/clear/h264/tears/tears.mpd");
+                    // Uri playUri = Uri.parse("");
                     Uri playUri =
                             RawResourceDataSource.buildRawResourceUri(R.raw.checker_video_16x9);
                     MediaSource mediaSource = buildMediaSource(playUri, dataSourceFactory);
